@@ -874,12 +874,13 @@ sub preChecks {
     $ENV{'LANG'} = $language;
 
     # Check that the required files are in the proper places.
-    my $make = $ENV{MAKE} || "make";
-    system("$make check");
+    my $pwd = $ENV{PWD};
+    printf "Using Docker to build benchmark\n";
+    system("sudo docker run --rm -v $pwd:/usr/src/byte-workbench -w /usr/src/byte-workbench gcc:latest make check");
     if ($? != 0) {
-        system("$make all");
+        system("sudo docker run --rm -v $pwd:/usr/src/byte-workbench -w /usr/src/byte-workbench gcc:latest make all");
         if ($? != 0) {
-            abortRun("\"$make all\" failed");
+            abortRun("\"make all\" failed");
         }
     }
 
